@@ -1,0 +1,30 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import NewsItem from "@components/NewsItem.astro";
+import { NEWS } from "@consts";
+
+const news = (await getCollection("news"))
+  .filter(item => !item.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<PageLayout title={NEWS.TITLE} description={NEWS.DESCRIPTION}>
+  <Container>
+    <div class="space-y-10">
+      <div class="animate font-semibold text-black dark:text-white">
+        News
+      </div>
+      <ul class="flex flex-col space-y-4">
+        {
+          news.map(entry => (
+            <li class="animate">
+              <NewsItem entry={entry} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</PageLayout>

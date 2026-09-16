@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
+
+type Props = {
+  entry: CollectionEntry<"news">;
+};
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<div class="flex flex-col sm:flex-row sm:gap-x-4">
+  <div class="shrink-0 sm:w-32 text-sm opacity-75 pt-0.5">
+    <FormattedDate date={entry.data.date} />
+  </div>
+  <div class="flex-1 prose dark:prose-invert prose-sm max-w-none prose-p:my-0 prose-a:text-current">
+    {
+      entry.data.inline ? (
+        <Content />
+      ) : (
+        <a
+          href={`/news/${entry.slug}`}
+          class="font-semibold text-black dark:text-white underline decoration-black/15 dark:decoration-white/30 underline-offset-2 hover:decoration-black/50 dark:hover:decoration-white/60 transition-colors duration-300 ease-in-out">
+          {entry.data.title}
+        </a>
+      )
+    }
+  </div>
+</div>

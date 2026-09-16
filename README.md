@@ -1,64 +1,60 @@
-![Astro Nano](_astro_nano.png)
+# christophalt.github.io
 
-Astro Nano is a static, minimalist, lightweight, lightning fast portfolio and blog theme.
+Personal site of Christoph Alt — built with [Astro](https://astro.build), based on the
+[Astro Nano](https://github.com/markhorn-dev/astro-nano) theme, deployed to GitHub Pages.
 
-Built with Astro, Tailwind and Typescript, an no frameworks.
+## Development
 
-It was designed as an even more minimal theme than my popular theme [Astro Sphere](https://github.com/markhorn-dev/astro-sphere)
+```
+pnpm install
+pnpm dev        # dev server
+pnpm build      # astro check && astro build
+pnpm lint       # eslint
+```
 
-## 🚀 Deploy your own
+## Content
 
-[![Deploy with Vercel](_deploy_vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/markhorn-dev/astro-nano)  [![Deploy with Netlify](_deploy_netlify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/markhorn-dev/astro-nano)
+All content lives in `src/content/`:
 
-## 📋 Features
+| Collection     | What goes there                                              |
+| -------------- | ------------------------------------------------------------ |
+| `publications` | One file per paper. Body is the abstract (omit it if there is none). |
+| `news`         | One file per update. `inline: true` renders it as a one-liner; `inline: false` needs a `title` and gets its own page at `/news/<slug>`. |
+| `work`         | One file per position, newest first by `dateStart`.           |
+| `blog`         | Standard posts. Set `draft: true` to hide one.                |
 
-- ✅ 100/100 Lighthouse performance
-- ✅ Responsive
-- ✅ Accessible
-- ✅ SEO-friendly
-- ✅ Typesafe
-- ✅ Minimal style
-- ✅ Light/Dark Theme
-- ✅ Animated UI
-- ✅ Tailwind styling
-- ✅ Auto generated sitemap
-- ✅ Auto generated RSS Feed
-- ✅ Markdown support
-- ✅ MDX Support (components in your markdown)
+Schemas are defined and validated in `src/content/config.ts`; `pnpm build` fails on
+anything that does not match.
 
-## 💯 Lighthouse score
-![Astro Nano Lighthouse Score](_lighthouse.png)
+### Adding a publication
 
-## 🕊️ Lightweight
-No frameworks or added bulk
+Create `src/content/publications/<slug>.md`:
 
-## ⚡︎ Fast
-Rendered in ~40ms on localhost
+```yaml
+---
+title: "Paper title"
+authors: ["Christoph Alt", "Co Author"]
+venue: "Proceedings of ..."
+abbr: "ACL"          # optional badge
+date: 2026-07-01
+type: "inproceedings" # or article, phdthesis
+selected: true        # shows on the homepage
+pdf: "https://..."    # all links optional
+website: "https://..."
+doi: "10.18653/..."
+url: "https://..."
+---
 
-## 📄 Configuration
+Abstract goes here.
+```
 
-The blog posts on the demo serve as the documentation and configuration.
+Your own name is matched against `SITE.NAME` in `src/consts.ts` and highlighted in the
+author list. News items can link to a paper with `/publications#<slug>`.
 
-## 💻 Commands
+Site-wide settings — name, email, socials, page descriptions — are in `src/consts.ts`.
 
-All commands are run from the root of the project, from a terminal:
+## Deployment
 
-Replace pnpm with your package manager of choice. `pnpm`, `pnpm`, `yarn`, `bun`, etc
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm dev:network`     | Starts local dev server on local network         |
-| `pnpm sync`            | Generates TypeScript types for all Astro modules.|
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm preview:network` | Preview build on local network                   |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-| `pnpm lint`            | Run ESLint                                       |
-| `pnpm lint:fix`        | Auto-fix ESLint issues                           |
-
-## 🏛️ License
-
-MIT
+`.github/workflows/deploy.yml` builds and publishes to GitHub Pages on every push to
+`main`. In the repository settings, set **Pages → Build and deployment → Source** to
+**GitHub Actions**.

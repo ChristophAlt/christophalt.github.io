@@ -20,16 +20,32 @@ const work = defineCollection({
   }),
 });
 
-const projects = defineCollection({
+const publications = defineCollection({
   type: "content",
   schema: z.object({
     title: z.string(),
-    description: z.string(),
+    authors: z.array(z.string()),
+    venue: z.string(),
+    abbr: z.string().optional(),
     date: z.coerce.date(),
-    draft: z.boolean().optional(),
-    demoURL: z.string().optional(),
-    repoURL: z.string().optional()
+    type: z.enum(["inproceedings", "article", "phdthesis"]),
+    selected: z.boolean().default(false),
+    pdf: z.string().optional(),
+    website: z.string().optional(),
+    slides: z.string().optional(),
+    doi: z.string().optional(),
+    url: z.string().optional(),
   }),
 });
 
-export const collections = { blog, work, projects };
+const news = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string().optional(),
+    date: z.coerce.date(),
+    inline: z.boolean().default(true),
+    draft: z.boolean().optional(),
+  }),
+});
+
+export const collections = { blog, work, publications, news };

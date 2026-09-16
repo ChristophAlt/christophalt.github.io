@@ -1,0 +1,96 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { SITE } from "@consts";
+
+type Props = {
+  entry: CollectionEntry<"publications">;
+};
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const hasAbstract = (entry.body ?? "").trim().length > 0;
+const primaryLink = entry.data.url ?? entry.data.pdf;
+
+const links = [
+  { label: "pdf", href: entry.data.pdf },
+  { label: "code", href: entry.data.website },
+  { label: "slides", href: entry.data.slides },
+  { label: "doi", href: entry.data.doi ? `https://doi.org/${entry.data.doi}` : undefined },
+].filter((link): link is { label: string; href: string } => Boolean(link.href));
+---
+
+<article id={entry.slug} class="flex gap-x-4 scroll-mt-24">
+  {
+    entry.data.abbr && (
+      <div class="hidden sm:block shrink-0 w-28 pt-0.5">
+        <span class="inline-block text-xs rounded border border-black/15 dark:border-white/20 px-1.5 py-0.5 leading-tight">
+          {entry.data.abbr}
+        </span>
+      </div>
+    )
+  }
+  <div class="flex-1 space-y-1">
+    <h3 class="font-semibold text-black dark:text-white">
+      {
+        primaryLink ? (
+          <a
+            href={primaryLink}
+            target="_blank"
+            class="underline decoration-black/15 dark:decoration-white/30 underline-offset-2 hover:decoration-black/50 dark:hover:decoration-white/60 transition-colors duration-300 ease-in-out">
+            {entry.data.title}
+          </a>
+        ) : (
+          entry.data.title
+        )
+      }
+    </h3>
+
+    <p class="text-sm">
+      {
+        entry.data.authors.map((author, i) => (
+          <>
+            {i > 0 && ", "}
+            {author === SITE.NAME ? <span class="text-black dark:text-white">{author}</span> : author}
+          </>
+        ))
+      }
+    </p>
+
+    <p class="text-sm opacity-75">
+      {entry.data.venue}, {entry.data.date.getFullYear()}
+    </p>
+
+    {
+      links.length > 0 && (
+        <ul class="flex flex-wrap gap-x-2 text-sm">
+          {links.map((link, i) => (
+            <li class="flex gap-x-2">
+              {i > 0 && <span class="opacity-40">/</span>}
+              <a
+                href={link.href}
+                target="_blank"
+                class="underline decoration-black/15 dark:decoration-white/30 underline-offset-2 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out">
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      hasAbstract && (
+        <details class="group text-sm pt-1">
+          <summary class="cursor-pointer list-none opacity-75 hover:opacity-100 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out">
+            <span class="group-open:hidden">Show abstract</span>
+            <span class="hidden group-open:inline">Hide abstract</span>
+          </summary>
+          <div class="prose dark:prose-invert prose-sm max-w-none pt-2 opacity-90">
+            <Content />
+          </div>
+        </details>
+      )
+    }
+  </div>
+</article>
